@@ -34,6 +34,7 @@
 
   //
   //DOMStorage/StorageEvent (localStorage) support
+  //
   var storageBroadcaster = function() {
     window.addEventListener('storage', this);
   };
