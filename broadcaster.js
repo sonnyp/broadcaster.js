@@ -40,13 +40,16 @@
   };
   storageBroadcaster.prototype = {
     handleEvent: function(e) {
-      if(e.key === 'broadcast')
-        window.onbroadcast(e.newValue);
+      if(e.key === 'broadcast') {
+        try {
+          window.onbroadcast(JSON.parse(e.newValue));
+        }
+        catch(e) {}
+      }
     },
     broadcast: function(message) {
-      console.log(typeof message)
       try {
-        localStorage.setItem('broadcast', message);
+        localStorage.setItem('broadcast', JSON.stringify(message));
       }
       catch(e) {
         return e;

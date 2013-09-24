@@ -15,10 +15,12 @@ Use it when the document is ready (DOMContentLoaded/$(document).ready)
 ```javascript
 window.broadcast('this message will be broadcasted to other tabs/windows');
 
-window.onbroadcast = function(message) {
+window.onbroadcast = function(message) {
   console.log(message + 'has been received from an other tab/window');
 };
 ```
+
+Broadcasted message support types are string, number, boolean and object.
 
 #Underhood
 
