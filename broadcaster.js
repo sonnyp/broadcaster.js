@@ -55,7 +55,7 @@
 
   var broadcaster;
   if (typeof window.SharedWorker !== 'undefined')
-    broadcaster = new sharedWorkerBroadcaster();
+    broadcaster = new sharedWorkerBroadcaster(window.broadcasterWorkerPath);
     // if (typeof workerURL === undefined)
       // var workerURL = 
   else if (typeof window.StorageEvent === 'function')
