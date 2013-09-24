@@ -1,0 +1,21 @@
+{
+  "name": "broadcaster.js",
+  "version": "0.0.1",
+  "description": "Server-less cross windows/tabs messaging",
+  "main": "broadcaster.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sonnyp/broadcaster.js.git"
+  },
+  "author": "Sonny Piers <sonny@fastmail.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sonnyp/broadcaster.js/issues"
+  }
+}

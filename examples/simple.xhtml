@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>broadcaster.js example - simple</title>
+    <meta charset="UTF-8"/>
+    <script src="../broadcaster.js"/>
+    <style>
+      div {
+        display: inline-block;
+        width: 40%;
+        vertical-align: top;
+      }
+    </style>
+    <script>
+      var appendElement = function(dest, value) {
+        var el = document.createElement('li');
+        el.textContent = value;
+
+        dest.appendChild(el);
+      };
+
+      var received;
+      var sent;
+
+      document.addEventListener('DOMContentLoaded', function() {
+        received = document.getElementById('received');
+        sent = document.getElementById('sent');
+
+        window.onbroadcast = function(message) {
+          appendElement(received, message);
+        };
+
+        var form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          var value = this.elements[0].value;
+          window.broadcast(value);
+          appendElement(sent, value);
+          this.reset();
+        })
+      });
+    </script>
+  </head>
+  <body>
+    <form>
+      <input type="text" autofocus="autofocus"/>
+      <input type="submit"/>
+    </form>
+    <div>
+      <h1>Sent:</h1>
+      <ul id="sent">
+      </ul>
+    </div>
+    <div>
+      <h1>Received:</h1>
+      <ul id="received">
+      </ul>
+    </div>
+  </body>
+</html>
