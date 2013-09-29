@@ -50,7 +50,7 @@ If SharedWorker interface is available, broadcaster use it otherwise it falls ba
 
 If StorageEvevent is unsupported by the browser, window.broadcast is undefined.
 
-When SharedWorker is used, broadcaster.js guesses the worker path based on its own URL. broadcasterWorker.js script must be in the same folder as 
+When SharedWorker is used, broadcaster.js guesses the worker path based on its own URL. broadcasterWorker.js script must be in the same folder of broadcaster.js. You can specifity a custom path for broadcasterWorker.js with:
 ```javascript
 Broadcaster.prototype.WorkerPath = path;
 ```

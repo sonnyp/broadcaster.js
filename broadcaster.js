@@ -47,7 +47,9 @@
   //
   var sharedWorkerBackend = {
     init: function() {
-      var worker = new SharedWorker(this.workerPath || getWorkerPath());
+      if (!this.workerPath)
+        this.workerPath = getWorkerPath();
+      var worker = new SharedWorker(this.workerPath);
       worker.port.addEventListener('message', this);
       worker.port.start();
       this.worker = worker;
