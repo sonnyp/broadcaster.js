@@ -23,10 +23,14 @@
       document.addEventListener('DOMContentLoaded', function() {
         var inputEl = document.querySelector('textarea');
         inputEl.addEventListener('input', function() {
-          window.broadcast(this.value);
+          broadcaster.set('value', this.value);
         });
-        window.onbroadcast = function(message) {
-          inputEl.value = message;
+        broadcaster.get('value', function(value) {
+          if (value)
+            inputEl.value = value;
+        });
+        broadcaster.onitem = function(key, value) {
+          inputEl.value = value;
         };
       });
     </script>

@@ -16,7 +16,10 @@
         var el = document.createElement('li');
         el.textContent = value;
 
-        dest.appendChild(el);
+        if (dest.hasChildNodes)
+          dest.insertBefore(el, dest.firstChild)
+        else
+          dest.appendChild(el);
       };
 
       var received;
@@ -26,7 +29,7 @@
         received = document.getElementById('received');
         sent = document.getElementById('sent');
 
-        window.onbroadcast = function(message) {
+        broadcaster.onmessage = function(message) {
           appendElement(received, message);
         };
 
@@ -35,7 +38,7 @@
           e.preventDefault();
 
           var value = this.elements[0].value;
-          window.broadcast(value);
+          broadcaster.broadcast(value);
           appendElement(sent, value);
           this.reset();
         })

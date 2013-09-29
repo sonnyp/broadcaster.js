@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>broadcaster.js example - media</title>
+    <meta charset="UTF-8"/>
+    <script src="../broadcaster.js"/>
+    <style>
+      body, html {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+      video {
+        width: 50%;
+        height: 50%;
+        margin: auto;
+        display: block;
+        top: 25%;
+        position: relative;
+      }
+    </style>
+    <script>
+      var source;
+      var videoEl;
+
+      window.addEventListener('focus', function() {
+        source = true;
+        if (videoEl)
+          videoEl.muted = false
+        // console.log(source)
+      });
+      window.addEventListener('blur', function() {
+        source = false;
+        if (videoEl)
+          videoEl.muted = true;
+        // console.log(source)
+      });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        videoEl = document.querySelector('video');
+        videoEl.muted = !source;
+        videoEl.addEventListener('playing', function() {
+          if (source) {
+            // videoEl.muted = false;
+            broadcaster.broadcast({action: 'play', time: videoEl.currentTime});
+          }
+          // else
+            // videoEl.muted = true;
+        });
+        videoEl.addEventListener('pause', function() {
+          if (source) {
+            // videoEl.muted = false;
+            broadcaster.broadcast({action: 'pause', time: videoEl.currentTime});
+          }
+          // else {
+            // videoEl.muted = true;
+          // }
+        });
+        videoEl.addEventListener('volumechange', function(e) {
+          broadcaster.broadcast({action: 'volume', volume: this.volume})
+        });
+        videoEl.addEventListener('seeking', function() {
+          if (source) {
+            // videoEl.muted = false;
+            broadcaster.broadcast({action: 'seek', time: videoEl.currentTime});
+          }
+          // else {
+            // videoEl.muted = true;
+          // }
+        })
+
+        broadcaster.onmessage = function(message) {
+          if (message.action === 'play')
+            videoEl.play();
+          else if (message.action === 'pause')
+            videoEl.pause();
+          if (message.time)
+            videoEl.currentTime = message.time;
+          if (message.volume)
+            videoEl.volume = message.volume;
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <video controls="controls">
+      <source src="http://videos-cdn.mozilla.net/brand/Mozilla_2011_Story.webm" type="video/webm"/>
+      <source src="http://videos-cdn.mozilla.net/brand/Mozilla_2011_Story.mp4" type="video/mp4"/>
+      <source src="http://videos-cdn.mozilla.net/brand/Mozilla_2011_Story.ogv" type="video/ogv"/>
+      Your browser does not support the <code>video</code> element.
+    </video>
+  </body>
+</html>
