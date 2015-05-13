@@ -1,10 +1,9 @@
-(function(window) {
-
+(function(global) {
   'use strict';
 
   var getWorkerPath = function() {
     var scripts = document.getElementsByTagName('script');
-    for (var i = 0, l = scripts.length; i < l ; i++) {
+    for (var i = 0, l = scripts.length; i < l; i++) {
       if (scripts[i].src.match('broadcaster.js')) {
         var a = document.createElement('a');
         a.href = scripts[i].src;
@@ -15,17 +14,17 @@
     }
   };
 
-  var Broadcaster = function(backend) {
+  var Broadcaster = function(backend) {
     if (!backend) {
-      if (typeof window.SharedWorker !== 'undefined')
+      if (typeof global.SharedWorker !== 'undefined')
         backend = sharedWorkerBackend;
-      else if (typeof window.StorageEvent === 'function')
+      else if (typeof global.StorageEvent === 'function')
         backend = storageEventBackend;
     }
     else if (backend === 'sharedWorker') {
       backend = sharedWorkerBackend;
     }
-    else if (backend = 'storageEvent') {
+    else if (backend === 'storageEvent') {
       backend = storageEventBackend;
     }
 
@@ -37,16 +36,16 @@
   };
   Broadcaster.prototype = {
     workerPath: null,
-    onmessage: new Function(),
-    onremove: new Function(),
-    onitem: new Function()
+    onmessage: function() {},
+    onremove: function() {},
+    onitem: function() {}
   };
 
   //
   //SharedWorker backend
   //
-  var sharedWorkerBackend = {
-    init: function() {
+  var sharedWorkerBackend = {
+    init: function() {
       if (!this.workerPath)
         this.workerPath = getWorkerPath();
       var worker = new SharedWorker(this.workerPath);
@@ -57,23 +56,26 @@
     },
     handleEvent: function(e) {
       var m = e.data;
-      if (m.broadcast)
+      if (m.broadcast) {
         this.onmessage(m.broadcast);
+      }
       else if (m.id && this.callbacks[m.id]) {
         if (m.value)
           this.callbacks[m.id](m.value);
         else
           this.callbacks[m.id]();
       }
-      else if (m.remove)
+      else if (m.remove) {
         this.onremove(m.remove);
-      else if (m.key && m.value)
+      }
+      else if (m.key && m.value) {
         this.onitem(m.key, m.value);
+      }
     },
     broadcast: function(message, callback) {
       var e = {broadcast: message};
       if (callback) {
-        var id = Date.now() + '-' + Math.random();
+        var id = Date.now() + '-' + Math.random();
         e.id = id;
         this.callbacks[id] = callback;
       }
@@ -83,7 +85,7 @@
     get: function(key, callback) {
       var e = {get: key};
       if (callback) {
-        var id = Date.now() + '-' + Math.random();
+        var id = Date.now() + '-' + Math.random();
         e.id = id;
         this.callbacks[id] = callback;
       }
@@ -93,17 +95,17 @@
     set: function(key, value, callback) {
       var e = {set: key, value: value};
       if (callback) {
-        var id = Date.now() + '-' + Math.random();
+        var id = Date.now() + '-' + Math.random();
         e.id = id;
         this.callbacks[id] = callback;
       }
 
       this.worker.port.postMessage(e);
     },
-    remove: function(key, callback) {
+    remove: function(key, callback) {
       var e = {remove: key};
       if (callback) {
-        var id = Date.now() + '-' + Math.random();
+        var id = Date.now() + '-' + Math.random();
         e.id = id;
         this.callbacks[id] = callback;
       }
@@ -117,14 +119,14 @@
   //
   var storageEventBackend = {
     init: function() {
-      window.addEventListener('storage', this);
+      global.addEventListener('storage', this);
       //FIXME when the last tab has been closed, clear localstorage
-      // window.addEventListener('unload', function() {
+      // global.addEventListener('unload', function() {
       //   localStorage.clear();
       // });
     },
     handleEvent: function(e) {
-      if(e.key === 'broadcast') {
+      if (e.key === 'broadcast') {
         this.onmessage(JSON.parse(e.newValue));
       }
       else if (e.newValue === null) {
@@ -139,19 +141,18 @@
       if (callback)
         callback();
     },
-    set: function(key, value, callback) {
+    set: function(key, value, callback) {
       localStorage.setItem(key, JSON.stringify(value));
       if (callback)
-        callback()
+        callback();
     },
-    get: function(key, callback) {
+    get: function(key, callback) {
       var value = localStorage.getItem(key);
       if (callback)
         callback(JSON.parse(value));
     }
   };
 
-  window.broadcaster = new Broadcaster();
-  window.Broadcaster = Broadcaster;
-
-})(window);
+  global.broadcaster = new Broadcaster();
+  global.Broadcaster = Broadcaster;
+}(this));
